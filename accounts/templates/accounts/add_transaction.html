@@ -1,0 +1,174 @@
+
+{% extends "base.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}Add Transaction | FinPulse{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts/css/add_transaction.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="add-transaction-page">
+
+    <header class="transaction-page-header">
+        <div class="header-copy">
+            <span class="page-eyebrow">FINANCIAL MANAGEMENT</span>
+            <h1>Add Transaction</h1>
+            <p>Record and organize your business income and expenses.</p>
+        </div>
+
+        <a href="{% url 'transactions' %}" class="back-button">
+            <span aria-hidden="true">&larr;</span>
+            All Transactions
+        </a>
+    </header>
+
+    {% if messages %}
+        <div class="messages-container">
+            {% for message in messages %}
+                <div class="alert-message {{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="transaction-layout">
+
+        <main class="transaction-form-card">
+
+            <div class="form-card-heading">
+                <div class="heading-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M12 5v14M5 12h14"
+                              stroke="currentColor"
+                              stroke-width="2"
+                              stroke-linecap="round"/>
+                    </svg>
+                </div>
+
+                <div>
+                    <h2>Transaction Details</h2>
+                    <p>Complete the fields below to record a transaction.</p>
+                </div>
+            </div>
+
+            <div class="form-divider"></div>
+
+            <form method="POST" class="transaction-form">
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                    <div class="form-error-summary">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+
+                <div class="form-grid">
+
+                    {% for field in form %}
+                        <div class="form-group
+                            {% if field.name == 'description' %}full-width{% endif %}
+                            {% if field.name == 'record_type' %}transaction-type-field{% endif %}
+                        ">
+
+                            <label for="{{ field.id_for_label }}">
+                                {{ field.label }}
+                                {% if field.field.required %}
+                                    <span class="required-mark">*</span>
+                                {% endif %}
+                            </label>
+
+                            {{ field }}
+
+                            {% if field.help_text %}
+                                <small class="field-help">
+                                    {{ field.help_text }}
+                                </small>
+                            {% endif %}
+
+                            {% for error in field.errors %}
+                                <p class="field-error">{{ error }}</p>
+                            {% endfor %}
+
+                        </div>
+                    {% endfor %}
+
+                </div>
+
+                <div class="form-divider bottom-divider"></div>
+
+                <div class="form-actions">
+                    <a href="{% url 'transactions' %}" class="cancel-button">
+                        Cancel
+                    </a>
+
+                    <button type="submit" class="save-button">
+                        <svg viewBox="0 0 24 24" fill="none"
+                             aria-hidden="true">
+                            <path d="M5 12.5l4.5 4.5L19 7"
+                                  stroke="currentColor"
+                                  stroke-width="2"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"/>
+                        </svg>
+                        Save Transaction
+                    </button>
+                </div>
+
+            </form>
+        </main>
+
+        <aside class="transaction-info-card">
+
+            <div class="info-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="12" r="9"
+                            stroke="currentColor" stroke-width="1.8"/>
+                    <path d="M12 11v5M12 8h.01"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"/>
+                </svg>
+            </div>
+
+            <h3>Before you save</h3>
+            <p>Keep your financial records accurate with these reminders.</p>
+
+            <div class="info-item">
+                <span class="info-number">01</span>
+                <div>
+                    <h4>Choose the right type</h4>
+                    <p>Select Sale for income records or Expense for business costs.</p>
+                </div>
+            </div>
+
+            <div class="info-item">
+                <span class="info-number">02</span>
+                <div>
+                    <h4>Match the category</h4>
+                    <p>Use an income category for sales and an expense category for expenses.</p>
+                </div>
+            </div>
+
+            <div class="info-item">
+                <span class="info-number">03</span>
+                <div>
+                    <h4>Use a unique reference</h4>
+                    <p>Each transaction needs a reference that has not already been used by your business.</p>
+                </div>
+            </div>
+
+            <div class="info-note">
+                <span class="note-dot"></span>
+                <p>Every transaction requires an initial payment. You can settle the remaining balance later.</p>
+            </div>
+
+        </aside>
+
+    </div>
+
+</div>
+{% endblock %}

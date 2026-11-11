@@ -1,0 +1,392 @@
+.page-header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+.csv-import-page .csv-back-btn {
+    display: inline-flex;
+    align-items: center;
+    align-self: flex-start;
+    gap: 8px;
+    padding: 10px 16px;
+    background-color: #1e293b;
+    color: #ffffff;
+    border: 1px solid #1e293b;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.csv-import-page .csv-back-btn:hover {
+    background-color: #334155;
+    color: #ffffff;
+}
+
+.transaction-btn.secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 14px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #374151;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.transaction-btn.secondary:hover {
+    background: #f3f4f6;
+    color: #111827;
+}
+
+.csv-import-page {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 30px;
+    color: #172b46;
+    box-sizing: border-box;
+}
+
+/* Page heading */
+
+.csv-import-page .page-header {
+    display: flex;
+    align-items: flex-start;
+    text-align: left;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 28px;
+}
+
+.csv-import-page .page-header h1 {
+    margin: 0 0 9px;
+    color: #081a30;
+    font-size: 29px;
+    font-weight: 800;
+    letter-spacing: -0.8px;
+}
+
+.csv-import-page .page-header p {
+    margin: 0;
+    color: #718096;
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+/* Shared card styling */
+
+.csv-import-page .upload-card,
+.csv-import-page .format-card,
+.csv-import-page .batch-summary {
+    background: #ffffff;
+    border: 1px solid #e5ebf3;
+    border-radius: 16px;
+    padding: 27px;
+    margin-bottom: 23px;
+    box-shadow: 0 5px 20px rgba(6, 23, 43, 0.035);
+}
+
+.csv-import-page .upload-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.csv-import-page .upload-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, #2457d6, #20b7a5);
+}
+
+.csv-import-page h2 {
+    margin: 0 0 12px;
+    color: #0a1c33;
+    font-size: 19px;
+    font-weight: 750;
+    letter-spacing: -0.3px;
+}
+
+.csv-import-page h3 {
+    margin: 27px 0 12px;
+    color: #193453;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.csv-import-page .help-text {
+    max-width: 720px;
+    margin: 0 0 25px;
+    color: #718096;
+    font-size: 13px;
+    line-height: 1.8;
+}
+
+/* Upload form */
+
+.csv-import-page .form-group {
+    margin-bottom: 23px;
+}
+
+.csv-import-page .form-group label {
+    display: block;
+    margin-bottom: 10px;
+    color: #263b55;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.csv-import-page input[type="file"] {
+    display: block;
+    width: 100%;
+    min-height: 150px;
+    padding: 45px 20px;
+    box-sizing: border-box;
+    border: 2px dashed #c7d5ea;
+    border-radius: 13px;
+    background: #f7faff;
+    color: #53657e;
+    font-family: inherit;
+    font-size: 13px;
+    cursor: pointer;
+    transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.csv-import-page input[type="file"]:hover {
+    border-color: #3975e8;
+    background: #f0f6ff;
+}
+
+.csv-import-page input[type="file"]:focus-visible {
+    outline: 3px solid rgba(57, 117, 232, 0.2);
+    outline-offset: 3px;
+}
+
+.csv-import-page input[type="file"]::file-selector-button {
+    margin-right: 15px;
+    padding: 11px 17px;
+    border: 0;
+    border-radius: 8px;
+    background: #e5edff;
+    color: #2457d6;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.csv-import-page input[type="file"]::file-selector-button:hover {
+    background: #d5e2ff;
+}
+
+/* Main upload button */
+
+.csv-import-page button[type="submit"] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 46px;
+    padding: 0 23px;
+    border: none;
+    border-radius: 9px;
+    background: linear-gradient(135deg, #2457d6, #1745b5);
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 5px 12px rgba(36, 87, 214, 0.17);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.csv-import-page button[type="submit"]:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 18px rgba(36, 87, 214, 0.25);
+}
+
+.csv-import-page button[type="submit"]:focus-visible {
+    outline: 3px solid rgba(36, 87, 214, 0.25);
+    outline-offset: 3px;
+}
+
+/* Required column format */
+
+.csv-import-page .format-card > p {
+    color: #718096;
+    font-size: 13px;
+    line-height: 1.8;
+}
+
+.csv-import-page .format-card code {
+    display: block;
+    padding: 17px;
+    margin: 15px 0 20px;
+    overflow-wrap: anywhere;
+    border: 1px solid #dce7f8;
+    border-radius: 10px;
+    background: #f3f7ff;
+    color: #214d9b;
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 12px;
+    line-height: 2;
+}
+
+/* Supported transaction types */
+
+.csv-import-page .format-card ul {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.csv-import-page .format-card li {
+    padding: 14px 15px;
+    border: 1px solid #e6edf5;
+    border-radius: 10px;
+    background: #fbfcff;
+    color: #5d6e83;
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+.csv-import-page .format-card li strong {
+    display: block;
+    margin-bottom: 3px;
+    color: #2457d6;
+    font-size: 13px;
+}
+
+/* Validation notice */
+
+.csv-import-page .notice {
+    padding: 15px 17px;
+    margin-top: 24px;
+    border: 1px solid #c9e8e4;
+    border-left: 4px solid #20a899;
+    border-radius: 9px;
+    background: #effbf9;
+    color: #286a65 !important;
+    font-size: 12px !important;
+    line-height: 1.8;
+}
+
+/* Latest import summary */
+
+.csv-import-page .batch-summary {
+    border-left: 4px solid #2457d6;
+    background: #f8faff;
+}
+
+.csv-import-page .batch-summary p {
+    margin: 10px 0;
+    color: #62748b;
+    font-size: 13px;
+}
+
+.csv-import-page .batch-summary a {
+    display: inline-block;
+    margin-top: 8px;
+    color: #2457d6;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.csv-import-page .batch-summary a:hover {
+    text-decoration: underline;
+}
+
+/* Django messages */
+
+.csv-import-page .message {
+    padding: 14px 17px;
+    margin-bottom: 17px;
+    border: 1px solid #dce7f8;
+    border-radius: 10px;
+    background: #f3f7ff;
+    color: #2457a7;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.csv-import-page .message.success {
+    border-color: #c5ead6;
+    background: #effaf4;
+    color: #187447;
+}
+
+.csv-import-page .message.error {
+    border-color: #f2cccc;
+    background: #fff4f4;
+    color: #a83232;
+}
+
+.csv-import-page .message.warning {
+    border-color: #f1dfb4;
+    background: #fff9e9;
+ 
+    color: #8a6517;
+}
+
+
+/* Responsive layout */
+
+@media (min-width: 1100px) {
+    .csv-import-page .upload-card,
+    .csv-import-page .format-card,
+    .csv-import-page .batch-summary {
+        padding: 30px;
+    }
+}
+
+@media (max-width: 768px) {
+    .csv-import-page {
+        padding: 20px 16px;
+    }
+
+    .csv-import-page .page-header h1 {
+        font-size: 24px;
+    }
+
+    .csv-import-page .upload-card,
+    .csv-import-page .format-card,
+    .csv-import-page .batch-summary {
+        padding: 21px 17px;
+        border-radius: 13px;
+    }
+
+    .csv-import-page .format-card ul {
+        grid-template-columns: 1fr;
+    }
+
+    .csv-import-page input[type="file"] {
+        min-height: 125px;
+        padding: 30px 13px;
+    }
+
+    .csv-import-page button[type="submit"] {
+        width: 100%;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .csv-import-page *,
+    .csv-import-page *::before,
+    .csv-import-page *::after {
+        transition: none !important;
+    }
+}

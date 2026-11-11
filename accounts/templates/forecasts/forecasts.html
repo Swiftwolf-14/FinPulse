@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% load static %}
+{% load humanize %}
+{% block title %}Financial forecasts|FinPulse{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts/css/forecasts.css' %}?{% now 'U' %}">
+{% endblock %}
+{% block content %}
+<section class="forecasts-page">
+    <div class="page-section-heading">
+        <div>
+            <h2>Financial Forecasts</h2>
+            <p>Explore expected financal performance based on historical records</p>
+             <a href="{% url 'dashboard' %}" class="back-dashboard-button">Back to Dashboard</a>
+        </div>
+    </div>
+    <!--FOREST SUMMARY-->
+    <div class="forecast-summary-grid">
+        <article class="forecast-card">
+            <span>Average Monthly Revenue</span>
+            <h3>Ksh {{ average_revenue|floatformat:2|intcomma}}</h3>
+            <p>Based on the previous six completed months</p>
+        </article>
+        <article class="forecast-card">
+            <span>Average Monthly Expenses</span>
+            <h3>Ksh {{ average_exepeses|floatformat:2|intcomma}}</h3>
+            <p>Based on the previous six completed months</p>
+        </article>
+        <article class="forecast-card">
+            <span>Average Monthly Profit</span>
+            <h3>Ksh {{ average_profit|floatformat:2|intcomma}}</h3>
+            <p>Average revenue minus average expenses</p>
+        </article>
+
+        <!--THREE-MONTH PROJECTION-->
+        <div class="forecast-panel-heading">
+            <h2>Three-month Financial Projection</h2>
+            <P>Estimated revenue, exepenses and profit for upcoming months.</P>
+            {% if not has_sufficient_data %}
+                <p class="forecast-warning">Not enough historical financial data to generate a reliable forecast. Atleast three months of financial activity are required</p>
+            {% endif %}
+        </div>
+        <div class="forecast-table-container">
+            <table class="forecast-table">
+                <thead>
+                    <tr>
+                        <th>Month</th>
+                        <th>Projected Revenue</th>
+                        <th>Projected Expenses</th>
+                        <th>Project Profit</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in projects %}
+                    <tr>
+                        <td>{{ item.month }}</td>
+                        <td>Ksh {{ item.revenue|floatformat:2|intcomma }}</td>
+                        <td>Ksh {{ item.expenses|floatformat:2|intcomma }}</td>
+                        <td>Ksh {{ item.profit|floatformat:2|intcomma }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4"> No projections available</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!--Historical performace-->
+    <div class="forecast-panel">
+        <div class="forecast-panel-heading">
+            <h2>Historical Financial Performance</h2>
+            <p>Financial activity during the previous six completed months</p>
+        </div>
+       
+        <div class="Forecast-table-container">
+            <table class="forecast-table">
+                <thead>
+                    <tr>
+                        <th>Month</th>
+                        <th>Revenue</th>
+                        <th>Expenses</th>
+                        <th>Net Profit</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in monthly_history %}
+                    <tr>
+                        <td>{{ item.month}}</td>
+                        <td>{{ item.revenue|floatformat:2|intcomma }}</td>
+                        <td>{{ item.expenses|floatformat:2|intcomma }}</td>
+                        <td>{{ item.profit|floatformat:2|intcomma }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4">No historical records available</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <!--FORECAST METHOD-->
+        <div class="forecast-method">
+            <h3>How these forecasts are calculated</h3>
+            <p>Finpulse calculates the average revenue and expenses from the previous six completed calendar months.</p>
+            <p>These are baseline estimates, not guaranteed outcomes. their reliability depends on the availability and consistency of hisorical financial records</p>
+        </div>
+    </div>
+</section>
+{% endblock %}

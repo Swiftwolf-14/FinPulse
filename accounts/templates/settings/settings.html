@@ -1,0 +1,531 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Settings | FinPulse{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts/css/settings.css' %}?{% now 'U' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="settings-page">
+
+    <!-- PAGE HEADER -->
+    <a href="{% url 'dashboard' %}" class="transaction-btn secondary">
+         &larr; Back to Dashboard
+    </a>
+    <h1>Settings</h1>
+    <p>Manage your business information, financial accounts, categories and team members.</p>
+
+    <!-- SUCCESS AND ERROR MESSAGES -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="settings-message {{ message.tags }}" role="status">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- SETTINGS NAVIGATION -->
+    <nav class="settings-tabs">
+        <a href="#business" class="active">Business Details</a>
+        <a href="#accounts">Accounts</a>
+        <a href="#categories">Categories</a>
+        <a href="#users">Users</a>
+    </nav>
+
+    <!-- BUSINESS DETAILS -->
+    <section class="settings-card" id="business">
+
+        <div class="settings-section-title">
+            <div>
+                <h2>Business Details</h2>
+                <p>Manage your business information.</p>
+            </div>
+        </div>
+
+        <form method="post" class="settings-form">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="update_business">
+
+            <div class="form-group">
+                <label for="business_name">Business Name</label>
+                <input
+                    type="text"
+                    id="business_name"
+                    name="business_name"
+                    placeholder="Enter business name"
+                    value="{{ business.name }}"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="business_type">Business Type</label>
+                <select id="business_type" name="business_type" required>
+                    <option value="">Select business type</option>
+                    <option value="Retail" {% if business.business_type == "Retail" %}selected{% endif %}>Retail</option>
+                    <option value="Agriculture" {% if business.business_type == "Agriculture" %}selected{% endif %}>Agriculture</option>
+                    <option value="Manufacturing" {% if business.business_type == "Manufacturing" %}selected{% endif %}>Manufacturing</option>
+                    <option value="Services" {% if business.business_type == "Services" %}selected{% endif %}>Services</option>
+                    <option value="Technology" {% if business.business_type == "Technology" %}selected{% endif %}>Technology</option>
+                    <option value="Other" {% if business.business_type == "Other" %}selected{% endif %}>Other</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="registration_number">Registration Number</label>
+                <input
+                    type="text"
+                    id="registration_number"
+                    name="registration_number"
+                    placeholder="Business registration number"
+                    value="{{ business.registration_number }}"
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="business_location">Business Location</label>
+                <input
+                    type="text"
+                    id="business_location"
+                    name="business_location"
+                    placeholder="Enter business location"
+                    value="{{ business.location }}"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="business_phone">Phone Number</label>
+                <input
+                    type="tel"
+                    id="business_phone"
+                    name="business_phone"
+                    placeholder="Enter phone number"
+                    value="{{ business.phone_number }}"
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="business_email">Business Email</label>
+                <input
+                    type="email"
+                    id="business_email"
+                    name="business_email"
+                    placeholder="Enter business email"
+                    value="{{ business.email }}"
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="currency">Business Currency</label>
+                <select id="currency" name="currency" required>
+                    <option value="KES" {% if business.currency == "KES" %}selected{% endif %}>KES - Kenyan Shilling</option>
+                    <option value="USD" {% if business.currency == "USD" %}selected{% endif %}>USD - US Dollar</option>
+                    <option value="EUR" {% if business.currency == "EUR" %}selected{% endif %}>EUR - Euro</option>
+                    <option value="GBP" {% if business.currency == "GBP" %}selected{% endif %}>GBP - British Pound</option>
+                </select>
+            </div>
+
+            <div class="settings-actions form-group full-width">
+                <button
+                    type="reset"
+                    class="settings-btn settings-btn-secondary"
+                >
+                    Reset Changes
+                </button>
+
+                <button
+                    type="submit"
+                    class="settings-btn settings-btn-primary"
+                >
+                    Save Business Details
+                </button>
+            </div>
+        </form>
+
+    </section>
+
+<!-- FINANCIAL ACCOUNTS -->
+<section class="settings-card" id="accounts">
+
+    <div class="settings-section-title">
+        <div>
+            <h2>Financial Accounts</h2>
+            <p>Manage the accounts used to record business money.</p>
+        </div>
+
+        <button
+            type="button"
+            class="settings-btn settings-btn-primary"
+            onclick="document.getElementById('account-form').hidden = false"
+        >
+            + Add Account
+        </button>
+    </div>
+
+    <!-- ADD ACCOUNT FORM -->
+    <form
+        method="post"
+        class="settings-form"
+        id="account-form"
+        hidden
+    >
+        {% csrf_token %}
+        <input type="hidden" name="action" value="add_account">
+
+        <div class="form-group">
+            <label for="account_name">Account Name</label>
+            <input
+                type="text"
+                id="account_name"
+                name="account_name"
+                placeholder="e.g. Main Cash Account"
+                required
+            >
+        </div>
+
+        <div class="form-group">
+            <label for="account_type">Account Type</label>
+            <select id="account_type" name="account_type" required>
+                <option value="">Select account type</option>
+                <option value="cash">Cash</option>
+                <option value="bank">Bank</option>
+                <option value="mobile_money">Mobile Money</option>
+                <option value="other">Other</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="account_number">Account Number (Optional)</label>
+            <input
+                type="text"
+                id="account_number"
+                name="account_number"
+                placeholder="Enter account number"
+            >
+        </div>
+
+        <div class="form-group">
+            <label for="opening_balance">
+                Opening Balance ({{ business.currency }})
+            </label>
+            <input
+                type="number"
+                id="opening_balance"
+                name="opening_balance"
+                min="0"
+                step="0.01"
+                value="0.00"
+                required
+            >
+        </div>
+
+        <div class="form-group">
+            <label for="account_branch">Branch (Optional)</label>
+            <select id="account_branch" name="branch">
+                <option value="">Business-wide account</option>
+                {% for branch in branches %}
+                    <option value="{{ branch.id }}">
+                        {{ branch.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="settings-actions form-group full-width">
+            <button
+                type="button"
+                class="settings-btn settings-btn-secondary"
+                onclick="document.getElementById('account-form').hidden = true"
+            >
+                Cancel
+            </button>
+
+            <button
+                type="submit"
+                class="settings-btn settings-btn-primary"
+            >
+                Save Account
+            </button>
+        </div>
+    </form>
+
+    <!-- ACCOUNTS TABLE -->
+    <div class="settings-table-wrapper">
+        <table class="settings-table">
+            <thead>
+                <tr>
+                    <th>Account Name</th>
+                    <th>Branch</th>
+                    <th>Type</th>
+                    <th>Opening Balance</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for account in accounts %}
+                    <tr>
+                        <td>{{ account.name }}</td>
+                        <td>
+                            {% if account.branch %}
+                                {{ account.branch.name }}
+                            {% else %}
+                                Business-wide
+                            {% endif %}
+                        </td>
+                        <td>{{ account.account_type }}</td>
+                        <td>
+                            {{ business.currency }}
+                            {{ account.opening_balance|floatformat:2 }}
+                        </td>
+                        <td>
+                            {% if account.is_active %}
+                                <span class="status-badge status-active">Active</span>
+                            {% else %}
+                                <span class="status-badge status-inactive">Inactive</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="5">
+                            <div class="settings-empty">
+                                No financial accounts have been added yet.
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</section>
+
+    <!-- TRANSACTION CATEGORIES -->
+    <section class="settings-card" id="categories">
+
+        <div class="settings-section-title">
+            <div>
+                <h2>Transaction Categories</h2>
+                <p>Organize income and expenses for better financial reports.</p>
+            </div>
+        </div>
+
+        <!-- ADD CATEGORY FORM -->
+        <form method="post" class="settings-form">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="add_category">
+
+            <div class="form-group">
+                <label for="category_name">Category Name</label>
+                <input
+                    type="text"
+                    id="category_name"
+                    name="category_name"
+                    placeholder="e.g. Sales, Rent, Transport"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="category_type">Category Type</label>
+                <select id="category_type" name="category_type" required>
+                    <option value="">Select category type</option>
+                    <option value="income">Income</option>
+                    <option value="expense">Expense</option>
+                </select>
+            </div>
+
+            <div class="form-group full-width">
+                <label for="category_description">
+                    Description (Optional)
+                </label>
+                <textarea
+                    id="category_description"
+                    name="category_description"
+                    placeholder="Describe this category"
+                ></textarea>
+            </div>
+
+            <div class="settings-actions form-group full-width">
+                <button
+                    type="submit"
+                    class="settings-btn settings-btn-primary"
+                >
+                    + Add Category
+                </button>
+            </div>
+        </form>
+
+        <!-- CATEGORIES TABLE -->
+        <div class="settings-table-wrapper">
+            <table class="settings-table">
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                        <th>Type</th>
+                        <th>Description</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for category in categories %}
+                        <tr>
+                            <td>{{ category.name }}</td>
+                            <td>{{ category.get_category_type_display }}</td>
+                            <td>{{ category.description|default:"—" }}</td>
+                            <td>
+                                {% if category.is_active %}
+                                    <span class="status-badge status-active">Active</span>
+                                {% else %}
+                                    <span class="status-badge status-inactive">Inactive</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="5">
+                                <div class="settings-empty">
+                                    No transaction categories have been added yet.
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <!-- TEAM MEMBERS -->
+    <section class="settings-card" id="users">
+
+        <div class="settings-section-title">
+            <div>
+                <h2>Team Members</h2>
+                <p>Manage users who have access to your FinPulse business.</p>
+            </div>
+        </div>
+
+        {% if is_admin %}
+
+            <!-- ADD USER FORM -->
+            <form method="post" class="settings-form">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="add_user">
+
+                <div class="form-group">
+                    <label for="first_name">First Name</label>
+                    <input type="text" id="first_name"
+                           name="first_name" placeholder="First name">
+                </div>
+
+                <div class="form-group">
+                    <label for="last_name">Last Name</label>
+                    <input type="text" id="last_name"
+                           name="last_name" placeholder="Last name">
+                </div>
+
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username"
+                           name="username" autocomplete="off"
+                           required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email"
+                           name="email" autocomplete="off"
+                           required>
+                </div>
+
+                <div class="form-group">
+                    <label for="new_user_password">Password</label>
+                    <input type="password" id="new_user_password"
+                           name="password" minlength="8"
+                           autocomplete="new-password" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirm_password">Confirm Password</label>
+                    <input type="password" id="confirm_password"
+                           name="confirm_password"
+                           minlength="8"
+                           autocomplete="new-password" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="role">User Role</label>
+                    <select id="role" name="role" required>
+                        <option value="">Select role</option>
+                        <option value="worker">Worker</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+
+                <div class="settings-actions form-group full-width">
+                    <button type="submit"
+                            class="settings-btn settings-btn-primary">
+                        + Add Team Member
+                    </button>
+                </div>
+            </form>
+
+        {% endif %}
+
+        <!-- TEAM MEMBERS TABLE -->
+        <div class="settings-table-wrapper">
+            <table class="settings-table">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for member in team_members %}
+                        <tr>
+                            <td>{{ member.user.username }}</td>
+                            <td>
+                                {{ member.user.get_full_name|default:"—" }}
+                            </td>
+                            <td>{{ member.user.email|default:"—" }}</td>
+                            <td>{{ member.role|title }}</td>
+                            <td>
+                                {% if member.user.is_active %}
+                                    <span class="status-badge status-active">
+                                        Active
+                                    </span>
+                                {% else %}
+                                    <span class="status-badge status-inactive">
+                                        Inactive
+                                    </span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="5">
+                                <div class="settings-empty">
+                                    No team members have been added yet.
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </section>
+
+
+</div>
+
+{% endblock %}

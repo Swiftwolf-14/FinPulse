@@ -1,0 +1,172 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#071a3d">
+    <title>{% block title %}FinPulse | Login{% endblock %}</title>
+
+    <link rel="stylesheet" href=" {% static 'accounts/css/login.css' %}?{% now 'U' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <main class="login-layout">
+        <section class="brand-panel">
+            <a href="#" class="brand">
+                <span class="brand-icon">F</span>
+                <span>Fin<span class="brand-green">Pulse</span></span>
+            </a>
+
+            <div class="brand-content">
+                <span class="eyebrow">TRACK. PLAN. GROW.</span>
+                <h1>Take Control of<br>
+                    <span>Your Finances</span>
+                </h1>
+
+                <p class="brand-description">
+                    Manage your money, track your spending, set goals,
+                    and build a better financial future — all in one place.
+                </p>
+
+                <div class="features">
+                    <div class="feature">
+                        <div class="feature-icon">↗</div>
+                        <div>
+                            <h3>Track Spending</h3>
+                            <p>See where your money goes.</p>
+                        </div>
+                    </div>
+
+                    <div class="feature">
+                        <div class="feature-icon">◎</div>
+                        <div>
+                            <h3>Save Smarter</h3>
+                            <p>Build your goals, one step at a time.</p>
+                        </div>
+                    </div>
+
+                    <div class="feature">
+                        <div class="feature-icon">✓</div>
+                        <div>
+                            <h3>Stay Secure</h3>
+                            <p>Your financial information matters.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="brand-footer">
+                <p>Better money habits.</p>
+                <p class="footer-accent">A brighter tomorrow.</p>
+                <div class="footer-line"></div>
+            </div>
+
+            <div class="background-orb orb-one"></div>
+            <div class="background-orb orb-two"></div>
+        </section>
+
+        <section class="form-panel">
+            <div class="login-card">
+
+                <div class="mobile-brand">
+                    <span class="brand-icon">F</span>
+                    <span>Fin<span class="brand-green">Pulse</span></span>
+                </div>
+
+                <div class="login-heading">
+                    <h2>Welcome Back</h2>
+                    <p>Log in to your account </p>
+                </div>
+
+                <form method="POST" action="{% url 'login' %}" id="loginForm">
+                    {% csrf_token %}
+                    {% if error %}
+                        <p class="form-message" role="alert">{{ error }}</p>
+                    {% endif %}
+
+            
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <div class="input-wrapper">
+                            <span class="input-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24">
+                                    <rect x="3" y="5" width="18" height="14" rx="3"/>
+                                    <path d="m4 7 8 6 8-6"/>
+                                </svg>
+                            </span>
+                            <input
+                                type="text"
+                                id="username"
+                                name="username"
+                                placeholder="@jas20"
+                                autocomplete="username"
+                                required
+                            >
+                        </div>
+                        <small class="error-message" id="emailError"></small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <div class="input-wrapper">
+                            <span class="input-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24">
+                                    <rect x="5" y="10" width="14" height="11" rx="2"/>
+                                    <path d="M8 10V7a4 4 0 0 1 8 0v3"/>
+                                </svg>
+                            </span>
+
+                            <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                placeholder="Enter your password"
+                                autocomplete="current-password"
+                                required
+                            >
+                            <button
+                                type="button"
+                                class="toggle-password"
+                                id="togglePassword"
+                                aria-label="Show password"
+                                aria-pressed="false"
+                            >
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/>
+                                    <circle cx="12" cy="12" r="3"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <small class="error-message" id="passwordError"></small>
+                    </div>
+                    <button type="submit" class="login-button" id="loginButton">
+                        <span>Log In</span>
+                        <span class="button-arrow">→</span>
+                    </button>
+
+                    <p id="formMessage" class="form-message" role="status" aria-live="polite"></p>
+
+                    <div class="divider">
+                        <span></span>
+                        
+                        <span></span>
+                    </div>
+                </form>
+
+                <p class="security-note">
+                    <span>✓</span> Your financial journey stays yours.
+                </p>
+            </div>
+
+            <p class="copyright">
+                © 2026 FinPulse. All rights reserved.
+            </p>
+        </section>
+
+    </main>
+
+</body>
+</html>

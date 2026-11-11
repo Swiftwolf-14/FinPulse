@@ -1,0 +1,492 @@
+
+:root {
+    --bg: #061326;
+    --bg2: #081a30;
+    --panel: #071b32;
+    --panel2: #0a213d;
+    --border: #183858;
+    --text: #eff6ff;
+    --muted: #8fa9c7;
+    --blue: #1689ff;
+    --cyan: #23c5ee;
+    --green: #2ee4a1;
+    --purple: #a66cff;
+    --pink: #e45bd6;
+    --red: #ff5575;
+    --radius: 13px;
+}
+
+/* ==============================
+   SETTINGS PAGE
+============================== */
+
+.settings-page {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 30px;
+    color: #1e293b;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+/* ==============================
+   BACK TO DASHBOARD BUTTON
+============================== */
+
+.settings-page > a.transaction-btn.secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 16px;
+    margin: 0 0 22px;
+    background: #ffffff;
+    color: #334155;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.settings-page > a.transaction-btn.secondary:hover {
+    background: #f1f5f9;
+    color: #0f172a;
+    border-color: #94a3b8;
+}
+
+/* ==============================
+   PAGE HEADING
+============================== */
+
+.settings-page > h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0 0 10px;
+}
+
+.settings-page > h1 + p {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #64748b;
+    margin: 0 0 28px;
+}
+
+/* ==============================
+   SUCCESS AND ERROR MESSAGES
+============================== */
+
+.settings-message {
+    padding: 13px 16px;
+    margin-bottom: 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.settings-message.success {
+    background: #dcfce7;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+}
+
+.settings-message.error {
+    background: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+}
+
+.settings-message.warning {
+    background: #fef3c7;
+    color: #92400e;
+    border: 1px solid #fde68a;
+}
+
+.settings-message.info {
+    background: #dbeafe;
+    color: #1e40af;
+    border: 1px solid #bfdbfe;
+}
+
+/* ==============================
+   SETTINGS CARDS
+============================== */
+
+.settings-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+    transition:
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.settings-card:hover {
+    border-color: #cbd5e1;
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.07);
+}
+
+.settings-card h2 {
+    font-size: 19px;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0 0 8px;
+}
+
+.settings-card p {
+    margin-bottom: 20px;
+}
+
+/* ==============================
+   SECTION HEADINGS
+============================== */
+
+.settings-section-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.settings-section-title p {
+    margin-bottom: 0;
+}
+
+/* ==============================
+   SETTINGS NAVIGATION TABS
+============================== */
+
+.settings-tabs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding-bottom: 16px;
+    margin-bottom: 24px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.settings-tabs a {
+    padding: 10px 15px;
+    border-radius: 7px;
+    color: #64748b;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease;
+}
+
+.settings-tabs a:hover {
+    background: #f0fdf4;
+    color: #1689ff;
+}
+
+.settings-tabs a.active {
+    background: #dcfce7;
+    color: #1689ff;
+}
+
+/* ==============================
+   FORMS
+============================== */
+
+.settings-form {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+}
+
+.form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+.form-group label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #334155;
+}
+
+/* Form inputs */
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #0f172a;
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: #1689ff;
+    box-shadow: 0 0 0 3px rgba(22, 137, 255, 0.12);
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+    color: #94a3b8;
+}
+
+.form-group textarea {
+    min-height: 110px;
+    resize: vertical;
+}
+
+/* ==============================
+   BUTTONS
+============================== */
+
+.settings-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 11px 18px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: inherit;
+    text-decoration: none;
+    cursor: pointer;
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.settings-btn:hover {
+    transform: translateY(-1px);
+}
+
+.settings-btn-primary {
+    background: linear-gradient(100deg, #1689ff, #071a3d);
+    color: #ffffff;
+}
+
+.settings-btn-primary:hover {
+    background: #1689ff;
+    color: #ffffff;
+}
+
+.settings-btn-secondary {
+    background: #f1f5f9;
+    color: #334155;
+    border-color: #e2e8f0;
+}
+
+.settings-btn-secondary:hover {
+    background: #e2e8f0;
+    color: #0f172a;
+}
+
+.settings-btn:focus-visible,
+.settings-tabs a:focus-visible,
+.settings-page > a.transaction-btn.secondary:focus-visible {
+    outline: 3px solid rgba(22, 137, 255, 0.35);
+    outline-offset: 3px;
+}
+
+/* ==============================
+   FORM ACTION BUTTONS
+============================== */
+
+.settings-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 12px;
+    margin-top: 24px;
+    flex-wrap: wrap;
+}
+
+/* ==============================
+   TABLES
+============================== */
+
+.settings-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.settings-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.settings-table th,
+.settings-table td {
+    padding: 15px 16px;
+    border-bottom: 1px solid #e2e8f0;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+.settings-table th {
+    background: #f8fafc;
+    color: #64748b;
+    font-weight: 600;
+}
+
+.settings-table td {
+    color: #334155;
+}
+
+.settings-table tbody tr:hover {
+    background: #f8fafc;
+}
+
+/* ==============================
+   STATUS LABELS
+============================== */
+
+.status-badge {
+    display: inline-block;
+    padding: 5px 9px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.status-active {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.status-inactive {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+/* ==============================
+   EMPTY STATES
+============================== */
+
+.settings-empty {
+    padding: 35px 20px;
+    text-align: center;
+    color: #64748b;
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+}
+
+/* ==============================
+   HIDDEN FORMS
+============================== */
+
+.settings-form[hidden] {
+    display: none;
+}
+
+/* ==============================
+   TABLETS
+============================== */
+
+@media (max-width: 768px) {
+    .settings-page {
+        padding: 20px;
+    }
+
+    .settings-page > h1 {
+        font-size: 24px;
+    }
+
+    .settings-card {
+        padding: 18px;
+    }
+
+    .settings-form {
+        grid-template-columns: 1fr;
+    }
+
+    .form-group.full-width {
+        grid-column: auto;
+    }
+}
+
+/* ==============================
+   PHONES
+============================== */
+
+@media (max-width: 480px) {
+    .settings-page {
+        padding: 14px;
+    }
+
+    .settings-page > h1 {
+        font-size: 22px;
+    }
+
+    .settings-page > a.transaction-btn.secondary {
+        padding: 9px 12px;
+        margin-bottom: 18px;
+        font-size: 13px;
+    }
+
+    .settings-card {
+        padding: 15px;
+        border-radius: 10px;
+    }
+
+    .settings-section-title {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .settings-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .settings-actions .settings-btn {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .settings-tabs {
+        gap: 5px;
+    }
+
+    .settings-tabs a {
+        padding: 9px 10px;
+    }
+
+    .settings-table th,
+    .settings-table td {
+        padding: 12px;
+    }
+}

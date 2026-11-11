@@ -1,0 +1,412 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}CSV Import Details | FinPulse{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts/css/csv_import_detail.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="csv-detail-page">
+
+    <header class="detail-page-header">
+        <div class="header-copy">
+            <span class="eyebrow">FINANCIAL DATA MANAGEMENT</span>
+            <h1>CSV Import Details</h1>
+            <p>Review, validate and manage your uploaded financial records.</p>
+        </div>
+
+        <a href="{% url 'csv_import' %}" class="back-link">
+            <span aria-hidden="true">&larr;</span>
+            Back to CSV Imports
+        </a>
+    </header>
+
+    {% if messages %}
+        <div class="detail-messages" aria-live="polite">
+            {% for message in messages %}
+                <div class="detail-message {{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <section class="import-overview">
+        <div class="overview-heading">
+            <div>
+                <span class="section-kicker">IMPORT OVERVIEW</span>
+                <h2>Import #{{ batch.id }}</h2>
+                <p>Summary of this CSV upload and its validation progress.</p>
+            </div>
+
+            <span class="batch-status status-{{ batch.status|lower }}">
+                {{ batch.get_status_display }}
+            </span>
+        </div>
+
+        <div class="summary-grid">
+            <article class="summary-card reference-card">
+                <div class="summary-icon">#</div>
+                <div>
+                    <span class="summary-label">Import reference</span>
+                    <strong>{{ batch.id }}</strong>
+                    <small>Unique batch ID</small>
+                </div>
+            </article>
+
+            <article class="summary-card">
+                <div class="summary-icon total-icon">≡</div>
+                <div>
+                    <span class="summary-label">Total rows</span>
+                    <strong>{{ batch.total_rows }}</strong>
+                    <small>Records in this file</small>
+                </div>
+            </article>
+
+            <article class="summary-card">
+                <div class="summary-icon valid-icon">✓</div>
+                <div>
+                    <span class="summary-label">Valid rows</span>
+                    <strong>{{ batch.valid_rows }}</strong>
+                    <small>Passed validation</small>
+                </div>
+            </article>
+
+            <article class="summary-card">
+                <div class="summary-icon invalid-icon">!</div>
+                <div>
+                    <span class="summary-label">Invalid rows</span>
+                    <strong>{{ batch.invalid_rows }}</strong>
+                    <small>Need attention</small>
+                </div>
+            </article>
+        </div>
+    </section>
+
+    <section class="records-card">
+        <div class="records-heading">
+            <div>
+                <span class="section-kicker">TRANSACTION DATA</span>
+                <h2>Imported Rows</h2>
+                <p>Inspect each transaction and check its validation status.</p>
+            </div>
+
+            <span class="row-count">
+                {{ rows|length }} row{{ rows|length|pluralize }}
+            </span>
+        </div>
+
+        {% if rows %}
+            <div class="table-hint">
+                Scroll horizontally to view all transaction details.
+            </div>
+
+            <div class="table-wrapper">
+                <table class="import-table">
+                    <thead>
+                        <tr>
+                            <th>CSV Row</th>
+                            <th>Date</th>
+                            <th>Branch</th>
+                            <th>Type</th>
+                            <th>Reference</th>
+                            <th>Description</th>
+                            <th>Category</th>
+                            <th class="amount-column">Amount (KES)</th>
+                            <th>Account</th>
+                            <th>Related Reference</th>
+                            <th>Validation</th>
+                            <th>Message</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for row in rows %}
+                            <tr class="data-row">
+                                <td class="row-number">#{{ row.row_number }}</td>
+                                <td>{{ row.raw_data.transaction_date|default:"—" }}</td>
+                                <td>
+                                    <span class="branch-code">
+                                        {{ row.raw_data.branch_code|default:"—" }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="type-label">
+                                        {{ row.raw_data.transaction_type|default:"—" }}
+                                    </span>
+                                </td>
+                                <td class="reference-cell">
+                                    {{ row.raw_data.reference_number|default:"—" }}
+                                </td>
+                                <td class="description-cell">
+                                    {{ row.raw_data.description|default:"—" }}
+                                </td>
+                                <td>{{ row.raw_data.category|default:"—" }}</td>
+                                <td class="amount-column">
+                                    {{ row.raw_data.amount|default:"—" }}
+                                </td>
+                                <td>{{ row.raw_data.account_name|default:"—" }}</td>
+                                <td>
+                                    {{ row.raw_data.related_reference|default:"—" }}
+                                </td>
+                                <td>
+                                    {% if row.status == "valid" %}
+                                        <span class="row-status status-valid">Valid</span>
+                                    {% elif row.status == "invalid" %}
+                                        <span class="row-status status-invalid">Needs review</span>
+                                    {% elif row.status == "duplicate" %}
+                                        <span class="row-status status-invalid">Duplicate</span>
+                                    {% elif row.status == "posted" %}
+                                        <span class="row-status status-valid">Posted</span>
+                                    {% else %}
+                                        <span class="row-status status-neutral">
+                                            {{ row.get_status_display }}
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td class="message-cell">
+                                    {% if row.error_message %}
+                                        {{ row.error_message }}
+                                    {% else %}
+                                        <span class="no-message">—</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+
+                            {% if batch.status == "pending" %}
+                                <tr class="correction-row">
+                                    <td colspan="12">
+                                        <details class="correction-details">
+                                            <summary>
+                                                <span class="edit-symbol" aria-hidden="true">&#9998;</span>
+                                                Correct CSV row {{ row.row_number }}
+                                            </summary>
+
+                                            <form method="post" class="row-correction-form">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="action" value="correct_row">
+                                                <input type="hidden" name="row_id" value="{{ row.id }}">
+
+                                                <div class="correction-heading">
+                                                    <h3>Row {{ row.row_number }} correction</h3>
+                                                    <p>
+                                                        Update the fields below and save to validate this row again.
+                                                    </p>
+                                                </div>
+
+                                                <div class="correction-fields">
+                                                    <label>
+                                                        Transaction date
+                                                        <input
+                                                            type="date"
+                                                            name="transaction_date"
+                                                            value="{{ row.raw_data.transaction_date|default:'' }}"
+                                                            required
+                                                        >
+                                                    </label>
+
+                                                    <label>
+                                                        Branch code
+                                                        <input
+                                                            type="text"
+                                                            name="branch_code"
+                                                            value="{{ row.raw_data.branch_code|default:'' }}"
+                                                            required
+                                                        >
+                                                    </label>
+
+                                                    <label>
+                                                        Transaction type
+                                                        <select name="transaction_type" required>
+                                                            <option value="">Select type</option>
+                                                            <option value="sale" {% if row.raw_data.transaction_type == "sale" %}selected{% endif %}>Sale</option>
+                                                            <option value="expense" {% if row.raw_data.transaction_type == "expense" %}selected{% endif %}>Expense</option>
+                                                            <option value="payment_received" {% if row.raw_data.transaction_type == "payment_received" %}selected{% endif %}>Payment received</option>
+                                                            <option value="payment_made" {% if row.raw_data.transaction_type == "payment_made" %}selected{% endif %}>Payment made</option>
+                                                        </select>
+                                                    </label>
+
+                                                    <label>
+                                                        Reference number
+                                                        <input
+                                                            type="text"
+                                                            name="reference_number"
+                                                            value="{{ row.raw_data.reference_number|default:'' }}"
+                                                            required
+                                                        >
+                                                    </label>
+
+                                                    <label class="field-wide">
+                                                        Description
+                                                        <input
+                                                            type="text"
+                                                            name="description"
+                                                            value="{{ row.raw_data.description|default:'' }}"
+                                                        >
+                                                    </label>
+
+                                                    <label>
+                                                        Category
+                                                        <input
+                                                            type="text"
+                                                            name="category"
+                                                            value="{{ row.raw_data.category|default:'' }}"
+                                                        >
+                                                    </label>
+
+                                                    <label>
+                                                        Amount (KES)
+                                                        <input
+                                                            type="number"
+                                                            name="amount"
+                                                            value="{{ row.raw_data.amount|default:'' }}"
+                                                            min="0.01"
+                                                            step="0.01"
+                                                            required
+                                                        >
+                                                    </label>
+
+                                                    <label>
+                                                        Account name
+                                                        <input
+                                                            type="text"
+                                                            name="account_name"
+                                                            value="{{ row.raw_data.account_name|default:'' }}"
+                                                        >
+                                                    </label>
+
+                                                    <label>
+                                                        Related reference
+                                                        <input
+                                                            type="text"
+                                                            name="related_reference"
+                                                            value="{{ row.raw_data.related_reference|default:'' }}"
+                                                        >
+                                                    </label>
+                                                </div>
+
+                                                <div class="correction-actions">
+                                                    <button type="submit" class="primary-button">
+                                                        Save and Validate Row
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </details>
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-state-icon">≡</div>
+                <h3>No imported rows</h3>
+                <p>No transaction rows were found in this import.</p>
+            </div>
+        {% endif %}
+    </section>
+
+    {% if batch.status == "pending" %}
+        <section class="records-card review-card">
+            <div class="records-heading">
+                <div>
+                    <span class="section-kicker">NEXT STEP</span>
+                    <h2>Import Review Actions</h2>
+                    <p>Review the validation results before proceeding.</p>
+                </div>
+            </div>
+
+            {% if batch.total_rows > 0 and batch.invalid_rows == 0 and batch.valid_rows == batch.total_rows %}
+                <div class="review-notice review-success">
+                    <strong>All rows passed validation.</strong>
+                    <p>Review the records above before approving this import.</p>
+                </div>
+            {% else %}
+                <div class="review-notice review-warning">
+                    <strong>Some rows need attention.</strong>
+                    <p>
+                        Correct the affected rows above. Approval remains unavailable
+                        until every row passes validation.
+                    </p>
+                </div>
+            {% endif %}
+
+            <div class="review-actions">
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="approve">
+                    <button
+                        type="submit"
+                        class="primary-button"
+                        {% if batch.total_rows == 0 or batch.invalid_rows > 0 or batch.valid_rows != batch.total_rows %}disabled{% endif %}
+                    >
+                        Approve Import
+                    </button>
+                </form>
+
+                <form
+                    method="post"
+                    onsubmit="return confirm('Are you sure you want to reject this import?');"
+                >
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="reject">
+                    <button type="submit" class="danger-button">
+                        Reject Import
+                    </button>
+                </form>
+            </div>
+        </section>
+
+    {% elif batch.status == "reviewed" %}
+        <section class="records-card review-card">
+            <div class="records-heading">
+                <div>
+                    <span class="section-kicker">FINAL STEP</span>
+                    <h2>Post Approved Import</h2>
+                    <p>
+                        Posting creates the financial records and links payments
+                        to their related sales or expenses.
+                    </p>
+                </div>
+            </div>
+
+            <div class="review-notice review-success">
+                <strong>This import has been approved.</strong>
+                <p>Confirm posting only when you're ready to add these records to FinPulse.</p>
+            </div>
+
+            <form
+                method="post"
+                onsubmit="return confirm('Post this import into FinPulse?');"
+            >
+                {% csrf_token %}
+                <input type="hidden" name="action" value="post">
+                <button type="submit" class="primary-button">
+                    Post Import
+                </button>
+            </form>
+        </section>
+
+    {% elif batch.status == "rejected" %}
+        <div class="final-status-message final-rejected">
+            <strong>Import rejected</strong>
+            <p>This import was rejected. No financial records were posted.</p>
+        </div>
+
+    {% elif batch.status == "posted" %}
+        <div class="final-status-message final-posted">
+            <strong>Import successfully posted</strong>
+            <p>
+                {{ batch.posted_rows }} row{{ batch.posted_rows|pluralize }}
+                were posted. Check the row statuses above for the results.
+            </p>
+        </div>
+    {% endif %}
+
+</div>
+{% endblock %}

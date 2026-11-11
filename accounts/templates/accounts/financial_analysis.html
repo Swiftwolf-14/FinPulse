@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} Financial Analysis | Finpulse {% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts/css/financial_analysis.css' %}?{% now 'U' %}">
+{% endblock %}
+
+{% block content %}
+<section class="financial-analysis-page">
+    <header class="page-header">
+        <div>
+            <h1>Financial Analysis</h1>
+            <p>Understanding your business's financial performance</p>
+        </div>
+        <a href="{% url 'dashboard' %}" class="back-dashboard-btn">
+            <i class="fas fa-arrow-left"></i>
+            Back to Dashboard
+        </a>
+    </header>
+    <div class="analysis-content">
+        <h2>Current Month performance</h2>
+        <p>Financial result from{{ today|date:"F Y"}}.</p>
+        <div class="analysis-metrics">
+            <article class="analysis-card">
+                <h3>Revenue</h3>
+                <p class="metric-value">Ksh {{ revenue|floatformat:2 }}</p>
+            </article>
+            <article class="analysis-card">
+                <h3>Expenses</h3>
+                <p class="metric-value">Ksh {{ expenses|floatformat:2 }}</p>
+            </article>
+            <article class="analysis-card">
+                <h3>Net Profit</h3>
+                <p class="metric-value">Ksh {{ net_profit|floatformat:2 }}</p>
+            </article>
+            <article class="analysis-card">
+                <h3>Profit Margin</h3>
+                <p class="metric-value">
+                    {% if profit_margin is not None %}
+                        {{ profit_margin|floatformat:2 }}
+                    {% else %}
+                        Not Available
+                    {% endif %}
+                </p>
+            </article>
+        </div>
+        <!--CASH FLOW ANALYSIS-->
+        <section class="cash-flow-section">
+            <div class="section-heading">
+                <div>
+                    <h2>Cah Flow Analysis</h2>
+                    <p>Actual money tecieved and paid this month</p>
+                </div>
+            </div>
+            <div class="cash-flow-metrics">
+                <article class="analysis-card">
+                    <h3>Cash recieved</h3>
+                    <p class="metric-value">Ksh {{ cash_received|floatformat:2}}</p>
+                </article>
+                <article class="analysis-card">
+                    <h3>Cash paid</h3>
+                    <p class="metric-value">Ksh {{ cash_paid|floatformat:2}}</p>
+                </article>
+                <article class="analysis-card">
+                    <h3>Net Cash Flow</h3>
+                    <p class="metric-value">Ksh {{ net_cash_flow|floatformat:2}}</p>
+                </article>
+
+            </div>
+            <div class="cash-flow-status">
+                <h3>Cash Flow Status</h3>
+                <p>{{ cash_flow_status}}</p>
+            </div>
+        </section>
+        <!--OUTSTANDING BALANCES-->
+        <section class="outstanding-section">
+            <div class="section-heading">
+                <div>
+                    <h2>Outstanding Balances</h2>
+                    <p>Unsettled amounts across all recorded transactions</p>
+                </div>
+            </div>
+            <div class="outstanding-metrics">
+                <article class="analysis-card">
+                    <h3>Outstanding Recievables</h3>
+                    <p class="metric-value">
+                        Ksh {{ outstanding_receivables|floatformat:2}}
+                    </p>
+                    <small>Money customer still owe the business</small>
+                </article>
+                <article class="analysis-card">
+                    <h3>Outstanding Payables</h3>
+                    <p class="metric-value">
+                        Ksh {{outstanding_payables|floatformat:2}}
+                    </p>
+                    <small>Money the business still owes</small>
+                </article>
+            </div>
+        </section>
+        <!--MONTHLY FINANCIAL TRENDS-->
+        <section class="trend-section">
+            <div class="section-heading">
+                <div>
+                    <h2>Monthly Financial Trends</h2>
+                    <p>Revenue, expenses and profit over last 12 months.</p>
+
+                </div>
+            </div>
+            <div class="trend-chart-container">
+                <canvas id="monthlyAnalysisChart"></canvas>
+            </div>
+        </section>
+    </div>
+</section>
+
+<section class="expense-category-section">
+    <div class="section-heading">
+        <div>
+            <h2>Expense Breakdown by Category</h2>
+            <p>See how your buiness expenses are distributed</p>
+        </div>
+    </div>
+    <div class="largest-expense-insight">
+        <h3>Largest Expense Category</h3>
+        {% if largest_expense_category %}
+            <p>{{ largest_expense_category.category }}</p>
+            <strong>
+                Ksh {{ largest_expense_category.amount|floatformat:2 }}
+            </strong>
+        {% else %}
+            <p>No expense records available for this period.</p>
+        {% endif %}
+    </div>
+    <!--UNUSUAL SPENDING ALERTS-->
+    <div class="unusual-spending-section">
+        <h3>Unusual Spending Alerts</h3>
+        {% if unusual_spending_alerts %}
+            {% for alert in unusual_spending_alerts %}
+            <div class="spending-alert">
+                <div>
+                    <strong>{{ alert.category }}</strong>
+                    <p>Spending is {{ alert.increase_percentage|floatformat:1 }} % above the historical average</p>
+                </div>
+                <div class="spending-alert-amount">
+                    <strong> Ksh {{ alert.current_amount|floatformat:2 }}</strong>
+                    <small>Average: Ksh {{ alert.historical_average|floatformat:2 }}</small>
+
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p class="no-spending-alert">
+                No unusual spending detected, or insufficient historical data is available for comparison.
+            </p>
+        {% endif %}
+    </div>
+    <!--FINANCIAL RECOMMENDATIONS-->
+    <section class="financial-recommendation-section">
+        <div class="section-heading">
+            <div>
+                <h2>Financial recommedations</h2>
+                <p>Suggestion to help improve your business financial performance</p>
+            </div>
+        </div>
+        <div class="recommendation-list">
+            {% for recommendation in financial_recommendation %}
+                <div class="recommendation-item">
+                    <span class="recommendation-icon"></span>
+                    <p>{{ recommendation }}</p>
+
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+
+
+    <div class="expense-chart-container">
+        <canvas id="expenseCategoryChart"></canvas>
+    </div>
+</section>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+{{ monthly_analysis_data| json_script:"monthly-analysis-data" }}
+{{ expense_category_data|json_script:"expense-category-data" }}
+<script src="{% static 'accounts/js/financial_analysis.js' %}?{% now 'U' %}"></script>
+
+{% endblock %}

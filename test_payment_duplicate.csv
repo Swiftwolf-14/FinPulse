@@ -1,0 +1,3 @@
+transaction_date,branch_code,transaction_type,reference_number,description,category,amount,account_name,related_reference
+2026-10-20,THK,payment_received,PAY-DUP-001,First test payment,,100.00,Test Cash Account,TEST-SALE-001
+2026-10-20,THK,payment_made,PAY-DUP-001,Second test payment,,50.00,Test Cash Account,TEST-EXPENSE-001

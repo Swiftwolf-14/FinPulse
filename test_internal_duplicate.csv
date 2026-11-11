@@ -1,0 +1,3 @@
+transaction_date,branch_code,transaction_type,reference_number,description,category,amount,account_name,related_reference
+2026-10-20,THK,sale,INTERNAL-TEST-001,First test sale,Sales Revenue,1000.00,,
+2026-10-20,THK,expense,INTERNAL-TEST-001,Second test expense,Utilities,500.00,,

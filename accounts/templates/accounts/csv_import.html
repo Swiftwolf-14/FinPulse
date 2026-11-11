@@ -1,0 +1,124 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Import CSV | FinPulse{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts/css/csv_import.css' %}?{% now 'U' %}">
+{% endblock %}
+
+{% block content %}
+<div class="csv-import-page">
+
+    <div class="page-header">
+            <a href="{% url 'dashboard' %}" class="transaction-btn secondary">
+                &larr; Back to Dashboard
+            </a>
+        <div>
+            <h1>Import Financial Records</h1>
+            <p>Upload a CSV file containing your branch transactions.</p>
+        </div>
+    </div> 
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="message {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="upload-card">
+        <h2>Upload CSV file</h2>
+        <p class="help-text">
+            Select a CSV file containing your financial records. The system will
+            validate the rows before any further processing.
+        </p>
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="csv_file">CSV file</label>
+                <input
+                    type="file"
+                    id="csv_file"
+                    name="csv_file"
+                    accept=".csv,text/csv"
+                    required
+                >
+            </div>
+
+            <button type="submit">Upload and Validate</button>
+        </form>
+    </div>
+
+    <div class="format-card">
+        <h2>Required CSV columns</h2>
+        <p>Your CSV should contain these column headings:</p>
+
+        <code>transaction_date, branch_code, transaction_type, reference_number, description, category, amount, account_name, related_reference</code>
+
+        <h3>Supported transaction types</h3>
+        <ul>
+            <li><strong>sale</strong> — records a sale.</li>
+            <li><strong>payment_received</strong> — records money received.</li>
+            <li><strong>expense</strong> — records an expense.</li>
+            <li><strong>payment_made</strong> — records money paid out.</li>
+        </ul>
+
+        <p class="notice">
+            Uploading validates the CSV. It does not automatically post
+            financial transactions.
+        </p>
+    </div>
+
+    <div class="format-card import-history">
+        <h2>Import History</h2>
+        <p>View previous uploads, review validation errors, and continue pending imports.</p>
+
+        {% if batches %}
+            <div class="import-history-list">
+                {% for item in batches %}
+                    <div class="batch-summary">
+                        <div class="batch-summary-header">
+                            <h3>Import #{{ item.id }}</h3>
+                            <span class="batch-status status-{{ item.status|lower }}">
+                                {{ item.get_status_display|default:item.status }}
+                            </span>
+                        </div>
+
+                        <p>
+                            <strong>Uploaded:</strong>
+                            {{ item.created_at|date:"d M Y, H:i" }}
+                        </p>
+
+                        <div class="batch-counts">
+                            <span>Total rows: {{ item.total_rows }}</span>
+                            <span>Valid: {{ item.valid_rows }}</span>
+                            <span>Invalid: {{ item.invalid_rows }}</span>
+                        </div>
+
+                        <a
+                            class="batch-view-link"
+                            href="{% url 'csv_import_detail' item.id %}"
+                        >
+                            {% if item.status == "pending" %}
+                                Review and correct rows
+                            {% elif item.status == "reviewed" %}
+                                View reviewed import
+                            {% elif item.status == "posted" %}
+                                View posted import
+                            {% else %}
+                                View import details
+                            {% endif %}
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>No CSV imports yet. Upload your first CSV file to get started.</p>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}

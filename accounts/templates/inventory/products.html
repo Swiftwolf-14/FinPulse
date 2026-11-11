@@ -1,0 +1,263 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Products | FinPulse{% endblock %}
+
+{% block extra_css %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'accounts/css/style.css' %}?{% now 'U' %}">
+<link rel="stylesheet" href="{% static 'accounts/css/products.css' %}?{% now 'U' %}">
+{% endblock %}
+
+{% block content %}
+<div class="app-shell products-shell">
+    <aside class="sidebar" id="sidebar">
+        <a class="brand-mark" href="{% url 'dashboard' %}">
+            <span class="brand-icon">↗</span>
+            <span class="brand-copy">
+                <strong>FINPULSE</strong>
+                <small>SME intelligence</small>
+            </span>
+        </a>
+
+        <nav class="main-nav" aria-label="Main navigation">
+            <a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a>
+            <a class="nav-link" href="{% url 'dashboard' %}#transactions">Transactions</a>
+            <a class="nav-link" href="{% url 'dashboard' %}#reports">Reports</a>
+            <a class="nav-link" href="{% url 'dashboard' %}#forecasts">Forecasts</a>
+            <a class="nav-link active" href="{% url 'products' %}">Products</a>
+            <a class="nav-link" href="{% url 'settings' %}">Settings</a>
+        </nav>
+    </aside>
+
+    <main class="main-content products-content">
+        <header class="topbar products-topbar">
+            <div class="page-heading">
+                <div class="eyebrow">INVENTORY MANAGEMENT</div>
+                <h1>Products</h1>
+                <p>Manage your business catalogue and product pricing.</p>
+            </div>
+
+            <div class="products-business">
+                <span class="business-indicator"></span>
+                <div>
+                    <strong>{{ business.name }}</strong>
+                    <small>Business catalogue</small>
+                </div>
+            </div>
+        </header>
+
+        {% if messages %}
+        <section class="product-messages" aria-live="polite">
+            {% for message in messages %}
+            <div class="product-message {{ message.tags }}">
+                <span>{{ message }}</span>
+            </div>
+            {% endfor %}
+        </section>
+        {% endif %}
+
+        <section class="product-overview">
+            <article class="product-overview-card">
+                <span class="overview-icon">▤</span>
+                <div>
+                    <span class="overview-label">Registered products</span>
+                    <strong>{{ products|length }}</strong>
+                    <small>Products in your catalogue</small>
+                </div>
+            </article>
+
+            <article class="product-overview-card">
+                <span class="overview-icon category-icon">◈</span>
+                <div>
+                    <span class="overview-label">Available categories</span>
+                    <strong>{{ categories|length }}</strong>
+                    <small>Active product categories</small>
+                </div>
+            </article>
+        </section>
+
+        <section class="product-layout">
+            <article class="panel product-form-panel">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <span class="title-icon">＋</span>
+                        <div>
+                            <h2>Register a product</h2>
+                            <p>Add an item to your business catalogue</p>
+                        </div>
+                    </div>
+                </div>
+
+                <form method="post" action="{% url 'products' %}" class="product-form">
+                    {% csrf_token %}
+
+                    <div class="form-field">
+                        <label for="product-name">Product name <span>*</span></label>
+                        <input
+                            id="product-name"
+                            type="text"
+                            name="name"
+                            maxlength="200"
+                            placeholder="e.g. Maize seeds"
+                            autocomplete="off"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-field">
+                        <label for="product-sku">SKU / Product code <span>*</span></label>
+                        <input
+                            id="product-sku"
+                            type="text"
+                            name="sku"
+                            maxlength="100"
+                            placeholder="e.g. SEED-001"
+                            autocomplete="off"
+                            required
+                        >
+                        <small>Must be unique within this business.</small>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="product-category">Category</label>
+                        <select id="product-category" name="category">
+                            <option value="">Choose a category (optional)</option>
+                            {% for category in categories %}
+                            <option value="{{ category.id }}">{{ category.name }}</option>
+                            {% endfor %}
+                        </select>
+
+                        {% if not categories %}
+                        <small>No active categories yet. You can register a product without one.</small>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-field">
+                        <label for="product-type">Product type <span>*</span></label>
+                        <select id="product-type" name="product_type" required>
+                            <option value="physical">Physical product</option>
+                            <option value="service">Service</option>
+                        </select>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="selling-price">Selling price (KES) <span>*</span></label>
+                        <div class="price-input">
+                            <span>KES</span>
+                            <input
+                                id="selling-price"
+                                type="number"
+                                name="selling_price"
+                                min="0"
+                                step="0.01"
+                                placeholder="0.00"
+                                required
+                            >
+                        </div>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="cost-price">Cost price (KES) <span>*</span></label>
+                        <div class="price-input">
+                            <span>KES</span>
+                            <input
+                                id="cost-price"
+                                type="number"
+                                name="cost_price"
+                                min="0"
+                                step="0.01"
+                                placeholder="0.00"
+                                required
+                            >
+                        </div>
+                    </div>
+
+                    <div class="product-form-note">
+                        <span>ⓘ</span>
+                        Registering a product does not add stock. Stock is recorded separately when inventory is received.
+                    </div>
+
+                    <button type="submit" class="primary-button product-submit">
+                        Register product <span class="button-arrow">→</span>
+                    </button>
+                </form>
+            </article>
+
+            <article class="panel product-list-panel">
+                <div class="panel-header product-list-header">
+                    <div class="panel-title">
+                        <span class="title-icon">▦</span>
+                        <div>
+                            <h2>Product catalogue</h2>
+                            <p>Products registered for {{ business.name }}</p>
+                        </div>
+                    </div>
+                    <span class="product-count">{{ products|length }}</span>
+                </div>
+
+                {% if products %}
+                <div class="product-table-wrap">
+                    <table class="product-table">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>SKU</th>
+                                <th>Category</th>
+                                <th>Type</th>
+                                <th>Selling price</th>
+                                <th>Cost price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for product in products %}
+                            <tr>
+                                <td>
+                                    <strong class="table-product-name">{{ product.name }}</strong>
+                                    <small class="table-product-status">
+                                        {% if product.is_active %}Active{% else %}Inactive{% endif %}
+                                    </small>
+                                </td>
+                                <td><span class="sku-value">{{ product.sku }}</span></td>
+                                <td>
+                                    {% if product.category %}
+                                        {{ product.category.name }}
+                                    {% else %}
+                                        <span class="muted-value">Uncategorised</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if product.product_type == "physical" %}
+                                        Physical
+                                    {% else %}
+                                        Service
+                                    {% endif %}
+                                </td>
+                                <td class="price-value">KES {{ product.selling_price|floatformat:2 }}</td>
+                                <td class="price-value">KES {{ product.cost_price|floatformat:2 }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="product-empty-state">
+                    <span class="empty-icon">▤</span>
+                    <h3>Your catalogue is ready for its first product</h3>
+                    <p>No products have been registered yet. Use the form to add a product when you're ready.</p>
+                </div>
+                {% endif %}
+            </article>
+        </section>
+
+        <footer class="footer products-footer">
+            <span>© 2026 FinPulse</span>
+            <span>Product catalogue · {{ business.currency }}</span>
+            <span>Inventory is tracked separately</span>
+        </footer>
+    </main>
+</div>
+{% endblock %}

@@ -1,0 +1,51 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>Stock Delivery History</h2>
+    <p>View all stock deliveries recorded for your business.</p>
+
+    {% if deliveries %}
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Date</th>
+                    <th>Branch</th>
+                    <th>Product</th>
+                    <th>Supplier</th>
+                    <th>Expected</th>
+                    <th>Received</th>
+                    <th>Accepted</th>
+                    <th>Status</th>
+                    <th>Recorded By</th>
+                    <th>Reviewed By</th>
+                    <th>Review Notes</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for delivery in deliveries %}
+                    <tr>
+                        <td>{{ delivery.id }}</td>
+                        <td>{{ delivery.delivery_date }}</td>
+                        <td>{{ delivery.branch }}</td>
+                        <td>{{ delivery.product }}</td>
+                        <td>{{ delivery.supplier_name }}</td>
+                        <td>{{ delivery.quantity_expected }}</td>
+                        <td>{{ delivery.quantity_received }}</td>
+                        <td>{{ delivery.quantity_accepted }}</td>
+                        <td>{{ delivery.get_status_display }}</td>
+                        <td>{{ delivery.recorded_by }}</td>
+                        <td>{{ delivery.reviewed_by|default:"—" }}</td>
+                        <td>{{ delivery.review_notes|default:"—" }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No stock deliveries have been recorded yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

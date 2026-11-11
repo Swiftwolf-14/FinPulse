@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>Record Stock Delivery</h2>
+    <p>Enter the details of the stock received at a branch.</p>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <button type="submit">
+            Record Delivery
+        </button>
+    </form>
+</div>
+{% endblock %}

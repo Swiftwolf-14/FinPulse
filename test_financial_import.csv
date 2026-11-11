@@ -1,0 +1,3 @@
+transaction_date,branch_code,transaction_type,reference_number,description,category,amount,account_name,related_reference
+2026-10-20,THK,sale,TEST-SALE-001,Test agricultural supplies sale,Sales Revenue,1500.00,,
+2026-10-20,THK,payment_received,TEST-PAY-001,Payment for test sale,,1500.00,Test Cash Account,TEST-SALE-001

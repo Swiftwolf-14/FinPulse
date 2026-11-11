@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% load static %}
+{% load humanize %}
+{% block title %}Financial Report |Finpulse{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts/css/reports.css' %}?{% now 'U' %}">
+{% endblock %}
+{% block content %}
+<section class="reports-page">
+    <div class="page-section-heading">
+        <div>
+            <h2>Financial Reports</h2>
+            <p>Review and understand your business financial performance</p>
+            <a href="{% url 'dashboard' %}" class="back-dashboard-button">Back to Dashboard</a>
+        </div>
+    </div>
+
+    <!--REPORTING PERIOD-->
+    <form method="GET" class="report-filter">
+        <div class="filter-group">
+            <label for="start_date">Start Date</label>
+            <input type="date" id="start_date" name="start_date" value="{{ start_date|date:'Y-m-d' }}" required>
+        </div>
+         <div class="filter-group">
+            <label for="end_date">End Date</label>
+            <input type="date" id="end_date" name="end_date" value="{{ end_date|date:'Y-m-d' }}" required>
+        </div>
+        <button type="submit" class="primary-button">Generate Report</button>
+    </form>
+
+    <!--FINANCIAL SUMMARY-->
+    <div class="repprt-summary-grid">
+        <article class="report-card revenue-card">
+            <span class="report-label">Total Revenue</span>
+            <h3>Ksh {{revenue|floatformat:2|intcomma }}</h3>
+            <p>Sales recorded in this period</p>
+        </article>
+        <article class="report-card expense-card">
+            <span class="report-label">Total Expenses</span>
+            <h3>Ksh {{expenses|floatformat:2|intcomma }}</h3>
+            <p>Expenses recorded in this period</p>
+        </article>
+        <article class="report-card profit-card">
+            <span class="report-label">Net Profit</span>
+            <h3>Ksh {{net_profit|floatformat:2|intcomma }}</h3>
+            <p>Revenue minus expenses</p>
+        </article>
+        <article class="report-card records-card">
+            <span class="report-label">Total Records</span>
+            <h3>{{ total_records }}</h3>
+            <p>Financial records in this period</p>
+        </article>
+    </div>
+
+    <!--FINANCIAL RECORDS-->
+    <div class="report-records panel">
+        <div class="panel-header">
+            <div class="panel-title">
+                <div>
+                    <h2>Financial Records</h2>
+                    <p>Transaction within the selected reporting period</p>
+                </div>
+            </div>
+        </div>
+        <div class="table-container">
+            <table class="activity-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Reference</th>
+                        <th>Description</th>
+                        <th>Category</th>
+                        <th>Branch</th>
+                        <th>Type</th>
+                        <th>Amount (Ksh)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for record in records %}
+                    <tr>
+                        <td>{{ record.transaction_date|date:"d M Y" }}</td>
+                        <td>{{ record.reference_number }}</td>
+                        <td>{{ record.description }}</td>
+                        <td>{{ record.category.name| default:"Uncategorised" }}</td>
+                        <td>
+                            {% if record.branch %}
+                                {{ record.branch.name }}
+                            {% else %}
+                                Business-wide
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if record.record_type == 'sale' %}
+                                <span class="activity-type income">Sale</span>
+                            {% else %}
+                                <span class="acivity-type expense">Expense</span>
+                            {% endif %}
+                        </td>
+                        <td class="amount-cell">
+                            Ksh {{ record.amount|floatformat:2 }}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="empty-state">
+                            No financial record found for this period
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</section>
+
+{% endblock %}

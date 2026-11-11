@@ -1,0 +1,2 @@
+transaction_date,branch_code,transaction_type,reference_number,description,category,amount,account_name,related_reference
+2026-10-20,THK,sale,TEST-SALE-001,Duplicate test sale,Sales Revenue,1500.00,,

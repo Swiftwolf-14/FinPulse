@@ -1,0 +1,287 @@
+
+{% extends "base.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}Transactions | FinPulse{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts/css/transactions.css' %}?{% now 'U' %}">
+{% endblock %}
+
+{% block content %}
+<div class="transactions-page">
+
+    <div class="page-header">
+        <div>
+            <h1>Transactions</h1>
+            <p>Manage and review your business transactions.</p>
+        </div>
+        <div class="header-actions">
+            <a href="{% url 'add_transaction' %}" class="add-transaction-btn">
+                + Add Transaction
+            </a>
+        </div>
+        <a href="{% url 'dashboard' %}" class="back-btn">
+            &larr; Back to Dashboard
+        </a>
+    </div>
+
+    <div class="summary-grid">
+        <div class="summary-card sales-card">
+            <div class="summary-label">Total Sales</div>
+            <div class="summary-value">
+                KSh {{ total_sales|floatformat:2|intcomma }}
+            </div>
+            <div class="summary-note">Recorded sales matching your filters</div>
+        </div>
+
+        <div class="summary-card expenses-card">
+            <div class="summary-label">Total Expenses</div>
+            <div class="summary-value">
+                KSh {{ total_expenses|floatformat:2|intcomma }}
+            </div>
+            <div class="summary-note">Recorded expenses matching your filters</div>
+        </div>
+
+        <div class="summary-card net-card">
+            <div class="summary-label">Net Difference</div>
+            <div class="summary-value">
+                KSh {{ net_difference|floatformat:2|intcomma }}
+            </div>
+            <div class="summary-note">Sales minus recorded expenses</div>
+        </div>
+
+        <div class="summary-card count-card">
+            <div class="summary-label">Matching Transactions</div>
+            <div class="summary-value">{{ total_records|intcomma }}</div>
+            <div class="summary-note">Transactions matching your filters</div>
+        </div>
+    </div>
+
+    <section class="content-card">
+        <div class="section-header">
+            <div>
+                <h2>Find Transactions</h2>
+                <p>Search and filter your financial records.</p>
+            </div>
+        </div>
+
+        <form method="GET" class="filter-form">
+            <div class="form-group search-group">
+                <label for="search">Search</label>
+                <input
+                    type="text"
+                    id="search"
+                    name="q"
+                    placeholder="Reference or description"
+                    value="{{ search_query }}"
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="type">Transaction Type</label>
+                <select id="type" name="type">
+                    <option value="">All Types</option>
+                    <option value="sale" {% if selected_type == "sale" %}selected{% endif %}>
+                        Sales
+                    </option>
+                    <option value="expense" {% if selected_type == "expense" %}selected{% endif %}>
+                        Expenses
+                    </option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="branch">Branch</label>
+                <select id="branch" name="branch">
+                    <option value="">All Branches</option>
+                    {% for branch in branches %}
+                        <option
+                            value="{{ branch.id }}"
+                            {% if selected_branch == branch.id|stringformat:"s" %}selected{% endif %}
+                        >
+                            {{ branch.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="start_date">From Date</label>
+                <input type="date" id="start_date" name="start_date" value="{{ start_date }}">
+            </div>
+
+            <div class="form-group">
+                <label for="end_date">To Date</label>
+                <input type="date" id="end_date" name="end_date" value="{{ end_date }}">
+            </div>
+
+            <div class="filter-actions">
+                <button type="submit" class="primary-btn">Apply Filters</button>
+                <a href="{% url 'transactions' %}" class="reset-btn">Reset</a>
+            </div>
+        </form>
+    </section>
+
+    <section class="content-card transactions-table-card">
+        <div class="section-header">
+            <div>
+                <h2>Transaction Records</h2>
+                <p>Review transactions, payments, and outstanding balances.</p>
+            </div>
+            <span class="record-count">
+                {{ total_records }} record{{ total_records|pluralize }}
+            </span>
+        </div>
+
+        <div class="table-wrapper">
+            <table class="transactions-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Reference</th>
+                        <th>Description</th>
+                        <th>Branch</th>
+                        <th>Category</th>
+                        <th>Type</th>
+                        <th class="amount-column">Amount (KSh)</th>
+                        <th class="amount-column">Paid (KSh)</th>
+                        <th class="amount-column">Balance (KSh)</th>
+                        <th>Payment Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for record in records %}
+                        <tr>
+                            <td>{{ record.transaction_date|date:"d M Y" }}</td>
+
+                            <td class="reference-cell">{{ record.reference_number }}</td>
+
+                            <td class="description-cell">
+                                {% if record.description %}
+                                    {{ record.description }}
+                                {% else %}
+                                    <span class="muted-text">No description</span>
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if record.branch %}
+                                    {{ record.branch.name }}
+                                {% else %}
+                                    <span class="muted-text">Not assigned</span>
+                                {% endif %}
+                            </td>
+
+                            <td>{{ record.category.name }}</td>
+
+                            <td>
+                                {% if record.record_type == "sale" %}
+                                    <span class="type-badge sale-badge">Sale</span>
+                                {% else %}
+                                    <span class="type-badge expense-badge">Expense</span>
+                                {% endif %}
+                            </td>
+
+                            <td class="amount-column">
+                                <span class="{% if record.record_type == 'sale' %}sale-amount{% else %}expense-amount{% endif %}">
+                                    {{ record.amount|floatformat:2|intcomma }}
+                                </span>
+                            </td>
+
+                            <td class="amount-column">
+                                {{ record.total_paid|floatformat:2|intcomma }}
+                            </td>
+
+                            <td class="amount-column">
+                                {{ record.outstanding_balance|floatformat:2|intcomma }}
+                            </td>
+
+                            <td>
+                                {% if record.outstanding_balance <= 0 %}
+                                    <span class="type-badge sale-badge">Paid</span>
+                                {% else %}
+                                    <span class="type-badge">Partially Paid</span>
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if record.outstanding_balace > 0 %}
+                                <a href="{% url 'add_payment' record.id %}" class="add-transaction-btn">
+                                    Record Payment
+                                </a>
+                                {% else %}
+                                    <span class="muted-text">Fully settled</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+
+                        {% if record.payment_history %}
+                            <tr>
+                                <td colspan="11">
+                                    <details>
+                                        <summary>
+                                            Payment history ({{ record.payment_history|length }})
+                                        </summary>
+                                        <div class="payment-history">
+                                            {% for payment in record.payment_history %}
+                                                <p>
+                                                    <strong>{{ payment.payment_date|date:"d M Y" }}</strong>
+                                                    — {{ payment.get_payment_type_display }}
+                                                    — KSh {{ payment.amount|floatformat:2|intcomma }}
+                                                    — {{ payment.account.name }}
+                                                    — Ref: {{ payment.reference_number }}
+                                                </p>
+                                                {% if payment.description %}
+                                                    <p>{{ payment.description }}</p>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    </details>
+                                </td>
+                            </tr>
+                        {% endif %}
+
+                    {% empty %}
+                        <tr>
+                            <td colspan="11" class="empty-state">
+                                <div class="empty-state-content">
+                                    <h3>No transactions found</h3>
+                                    <p>
+                                        No records match your current filters.
+                                        Try changing your search or date range.
+                                    </p>
+                                    <a href="{% url 'transactions' %}" class="reset-btn">
+                                        Clear Filters
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+
+                {% if records %}
+                    <tfoot>
+                        <tr>
+                            <td colspan="6">Matching Records</td>
+                            <td class="amount-column">{{ total_records|intcomma }}</td>
+                            <td colspan="4"></td>
+                        </tr>
+                    </tfoot>
+                {% endif %}
+            </table>
+        </div>
+
+        <div class="table-footer-note">
+            <p>
+                Transaction amounts show the original sales or expenses.
+                Payments are tracked separately and reduce the outstanding balance;
+                they are not added to sales or expenses a second time.
+            </p>
+        </div>
+    </section>
+</div>
+{% endblock %}

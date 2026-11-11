@@ -1,0 +1,75 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>Stock Delivery Approvals</h2>
+    <p>Review deliveries received at your business branches.</p>
+
+    {% if pending_deliveries %}
+        {% for delivery in pending_deliveries %}
+            <div class="delivery-card">
+
+                <h3>Delivery #{{ delivery.id }}</h3>
+
+                <p><strong>Branch:</strong> {{ delivery.branch }}</p>
+                <p><strong>Product:</strong> {{ delivery.product }}</p>
+                <p><strong>Supplier:</strong> {{ delivery.supplier_name }}</p>
+                <p><strong>Reference:</strong> {{ delivery.reference|default:"N/A" }}</p>
+                <p><strong>Expected:</strong> {{ delivery.quantity_expected }}</p>
+                <p><strong>Received:</strong> {{ delivery.quantity_received }}</p>
+                <p><strong>Date:</strong> {{ delivery.delivery_date }}</p>
+                <p><strong>Recorded by:</strong> {{ delivery.recorded_by }}</p>
+
+            
+                    <form method="POST">
+                        {% csrf_token %}
+
+                        <input
+                            type="hidden"
+                            name="delivery_id"
+                            value="{{ delivery.id }}"
+                        >
+
+                        <label>Quantity Accepted</label>
+                        <input
+                            type="number"
+                            name="quantity_accepted"
+                            min="0.001"
+                            max="{{ delivery.quantity_received }}"
+                            step="0.001"
+                        >
+
+                        <label>Review Notes / Rejection Reason</label>
+                        <textarea
+                            name="review_notes"
+                            rows="3"
+                            placeholder="Enter review notes or explain why this delivery is rejected..."
+                        ></textarea>
+
+                        <button
+                            type="submit"
+                            name="action"
+                            value="approve"
+                        >
+                            Approve Delivery
+                        </button>
+
+                        <button
+                            type="submit"
+                            name="action"
+                            value="reject"
+                        >
+                            Reject Delivery
+                        </button>
+                    </form>
+
+
+            </div>
+            <hr>
+        {% endfor %}
+    {% else %}
+        <p>No pending stock deliveries.</p>
+    {% endif %}
+</div>
+{% endblock %}
